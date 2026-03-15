@@ -66,8 +66,6 @@
 </template>
  
 <script>
-// 1. 导入创建的 mixin 共享功能配置文件
-import gistDataMixin from '../../mixins/index'; 
 // 1. 必须导入 axios
 import axios from 'axios';
 export default {
