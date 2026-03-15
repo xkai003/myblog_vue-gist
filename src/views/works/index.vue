@@ -168,15 +168,7 @@ export default {
 </script>
 
 <style scoped>
-.body {
-    /* position: fixed; */
-    /* margin: 0; */
-    /* width: 99vw;
-    height: 98vh; */
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
-    /* background-color: #abe1e3; */
+.body{
     background-color: rgba(250, 246, 246, 0.8);
     /* 方格背景 */
     background: linear-gradient(90deg, rgba(200, 200, 200, 0.1) 3%, transparent 0),
@@ -380,10 +372,8 @@ body {
     display: flex;
     flex-direction: row;
     border: 1px solid #fff;
-    background-color: #fff;
     box-shadow: 2px 2px 20px -2px rgb(197, 196, 196);
-    /* white-space: nowrap; */
-    overflow: hidden;         /* 2. 隐藏超出容器的部分 */
+    background-color: #fff;
 }
 .item:hover{
     border: 1px solid rgb(197, 196, 196);
@@ -443,7 +433,7 @@ body {
     /* background-color: #b18e8e; */
     /* line-height: 30px; */
     /* padding: 5px 0px 5px 0px; */
-    max-width: 90%;
+    max-width: 50%;
     overflow: hidden;         /* 2. 隐藏超出容器的部分 */
     text-overflow: ellipsis;  /* 3. 将被隐藏的部分显示为省略号 */
     white-space: nowrap;
@@ -478,7 +468,6 @@ body {
     line-height: 50px;
     width: 80px;
     font-size: 15px;
-    color: black;
     background-color: #fff;
     text-align: center;
 }

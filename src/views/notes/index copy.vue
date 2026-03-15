@@ -68,21 +68,16 @@
 <script>
 // 1. 导入创建的 mixin 共享功能配置文件
 import gistDataMixin from '../../mixins/index'; 
-// 1. 必须导入 axios
-import axios from 'axios';
 export default {
+    // 2. 使用 mixins 选项将它混入
+    mixins: [gistDataMixin],
     data() {
         return {
-            noteslist: [], // 存储 Gist 读取的 notes 数据
-            itemsPerPage: 4, // 一页显示4条
+            itemsPerPage: 4, // 一页只能有四个
             vueCurrentPage: 1, // 当前页码
             staticCurrentPage: 1,
-            searchQuery: '', // 搜索关键词
-            StaticWebList: [], // 兼容原有静态数据逻辑
+            searchQuery: '', // 获取搜索输入框的信息
         }
-    },
-    created() {
-        this.fetchGistData();
     },
     computed: {
         // 搜索数据
@@ -94,7 +89,7 @@ export default {
             return this.noteslist.filter(item => {
                 return (
                     item.title.toLowerCase().includes(query) ||
-                    item.technology.toLowerCase().includes(query) ||
+                    (item.description && item.description.toLowerCase().includes(query)) ||
                     (item.api && item.api.toLowerCase().includes(query)) || // Check if api exists before using includes
                     (item.wb_p1 && item.wb_p1.toLowerCase().includes(query)) ||
                     (item.wb_p2 && item.wb_p2.toLowerCase().includes(query)) ||
@@ -137,19 +132,6 @@ export default {
         },
     },
     methods: {
-         async fetchGistData() {
-            try {
-                // Gist 公开原始地址
-                const gistUrl = 'https://gist.githubusercontent.com/xkai003/6cfe392a7106292cdb6c0f542cd2c23d/raw/96baaceae54de33cad687065d36fc136ea878946/myblog-vue';
-                const response = await axios.get(gistUrl);
-                console.log("读取到的数据是：", response.data.notes);
-                // 赋值到 noteslist（与计算属性中的变量名匹配）
-                this.noteslist = response.data.notes || [];
-            } catch (error) {
-                console.error('读取 Gist 失败:', error);
-                this.noteslist = []; // 出错时重置数据
-            }
-        },
         // 上下页切换动作
         changeVuePage(page) {
             this.vueCurrentPage = page;

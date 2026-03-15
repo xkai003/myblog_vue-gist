@@ -41,9 +41,103 @@
 <script>
 // 1. 导入创建的 mixin 共享功能配置文件
 import gistDataMixin from '../../mixins/index'; 
+// 1. 必须导入 axios
+import axios from 'axios';
 export default {
-    // 2. 使用 mixins 选项将它混入
-    mixins: [gistDataMixin],
+    data() {
+        return {
+            travellist: [], // 存储 Gist 读取的 travel 数据
+            itemsPerPage: 4, // 一页显示4条
+            vueCurrentPage: 1, // 当前页码
+            staticCurrentPage: 1,
+            searchQuery: '', // 搜索关键词
+            StaticWebList: [], // 兼容原有静态数据逻辑
+        }
+    },
+    created() {
+        this.fetchGistData();
+    },
+    computed: {
+        // 搜索数据
+        filteredVueWebList() {
+            if (!this.travellist || !Array.isArray(this.travellist)) {
+                return [];
+            }
+            const query = this.searchQuery.toLowerCase();
+            return this.travellist.filter(item => {
+                return (
+                    item.title.toLowerCase().includes(query) ||
+                    item.technology.toLowerCase().includes(query) ||
+                    (item.api && item.api.toLowerCase().includes(query)) || // Check if api exists before using includes
+                    (item.wb_p1 && item.wb_p1.toLowerCase().includes(query)) ||
+                    (item.wb_p2 && item.wb_p2.toLowerCase().includes(query)) ||
+                    (item.wb_p3 && item.wb_p3.toLowerCase().includes(query)) ||
+                    (item.wb_p4 && item.wb_p4.toLowerCase().includes(query)) ||
+                    (item.wb_p5 && item.wb_p5.toLowerCase().includes(query)) ||
+                    (item.wb_p6 && item.wb_p6.toLowerCase().includes(query)) ||
+                    (item.wb_p7 && item.wb_p7.toLowerCase().includes(query))||
+                    (item.wb_p8 && item.wb_p8.toLowerCase().includes(query))||
+                    (item.wb_p9 && item.wb_p9.toLowerCase().includes(query))
+                );
+            });
+        },
+        // vueTotalPages：计算属性的名称，表示 "Vue 总页数"
+        // this.VueWebList.length：获取 Vue 项目列表的数组长度（即有多少个项目）
+        // this.itemsPerPage：每页显示的项目数量（在你的代码中是 4）
+        // Math.ceil()：JavaScript 内置函数，向上取整
+        // 计算示例
+        // 假设你的 Vue 项目列表有：
+
+        // 5 个项目 (VueWebList.length = 5)
+        // 每页显示 4 个 (itemsPerPage = 4)
+        // 计算过程：
+
+        // <JAVASCRIPT>
+        // 5 / 4 = 1.25
+        // Math.ceil(1.25) = 2
+        // 结果：需要 2 页
+        vueTotalPages() {
+            return Math.ceil(this.filteredVueWebList.length  / this.itemsPerPage);
+        },
+        
+        staticTotalPages() {
+            return Math.ceil(this.StaticWebList.length / this.itemsPerPage);
+        },
+        displayedVueWebList() {
+            const start = (this.vueCurrentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.filteredVueWebList.slice(start, end); // Use filtered list
+        },
+    },
+    methods: {
+         async fetchGistData() {
+            try {
+                // Gist 公开原始地址
+                const gistUrl = 'https://gist.githubusercontent.com/xkai003/6cfe392a7106292cdb6c0f542cd2c23d/raw/96baaceae54de33cad687065d36fc136ea878946/myblog-vue';
+                const response = await axios.get(gistUrl);
+                console.log("读取到的数据是：", response.data.travel);
+                // 赋值到 travellist（与计算属性中的变量名匹配）
+                this.travellist = response.data.travel || [];
+            } catch (error) {
+                console.error('读取 Gist 失败:', error);
+                this.travellist = []; // 出错时重置数据
+            }
+        },
+        // 上下页切换动作
+        changeVuePage(page) {
+            this.vueCurrentPage = page;
+            // 最小只能翻到第一页
+            if(this.vueCurrentPage < 1){
+                alert("已经是第一页了")
+                return this.vueCurrentPage = 1
+            }
+            // 最大只能翻到最后一页
+            if(this.vueCurrentPage > this.vueTotalPages){
+                alert("已经是最后一页了")
+                this.vueCurrentPage = this.vueTotalPages
+            }
+        },
+    }
 }
 </script>
 
