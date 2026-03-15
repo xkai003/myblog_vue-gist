@@ -67,15 +67,17 @@
 <script>
 // 1. 导入创建的 mixin 共享功能配置文件
 import gistDataMixin from '../../mixins/index'; 
+// 1. 必须导入 axios
+import axios from 'axios';
 export default {
-    // 2. 使用 mixins 选项将它混入
-    mixins: [gistDataMixin],
     data() {
         return {
-            itemsPerPage: 4, // 一页只能有四个
+            workslist: [], // 存储 Gist 读取的 works 数据
+            itemsPerPage: 4, // 一页显示4条
             vueCurrentPage: 1, // 当前页码
             staticCurrentPage: 1,
-            searchQuery: '', // 获取搜索输入框的信息
+            searchQuery: '', // 搜索关键词
+            StaticWebList: [], // 兼容原有静态数据逻辑
         }
     },
     created() {
@@ -134,16 +136,19 @@ export default {
         },
     },
     methods: {
-        //  async fetchGistData() {
-        //     try {
-        //         const response = await axios.get('https://gist.githubusercontent.com/xkai003/6cfe392a7106292cdb6c0f542cd2c23d/raw/96baaceae54de33cad687065d36fc136ea878946/myblog-vue')
-        //         console.log("读取到的数据是：", response.data.works)
-        //         // 将拿到的数据中的works的值赋给页面中的 VueWebList 数值
-        //         this.VueWebList = response.data.works
-        //     } catch (error) {
-        //         console.error('读取 Gist 失败:', error);
-        //     }
-        // },
+         async fetchGistData() {
+            try {
+                // Gist 公开原始地址
+                const gistUrl = 'https://gist.githubusercontent.com/xkai003/6cfe392a7106292cdb6c0f542cd2c23d/raw/96baaceae54de33cad687065d36fc136ea878946/myblog-vue';
+                const response = await axios.get(gistUrl);
+                console.log("读取到的数据是：", response.data.works);
+                // 赋值到 workslist（与计算属性中的变量名匹配）
+                this.workslist = response.data.works || [];
+            } catch (error) {
+                console.error('读取 Gist 失败:', error);
+                this.workslist = []; // 出错时重置数据
+            }
+        },
         // 上下页切换动作
         changeVuePage(page) {
             this.vueCurrentPage = page;

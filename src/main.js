@@ -1,7 +1,11 @@
+// src/main.js
 import { createApp } from 'vue'
+import './style.css'
 import App from './App.vue'
-import router from './router' // 正确： 导入路由实例 (从 router.js)
+import router from './router/index'
+import axios from 'axios' // 导入 axios
 
 const app = createApp(App)
-
-app.use(router).mount('#app') // 正确： 使用路由
+app.use(router)
+app.config.globalProperties.$axios = axios // 全局注册 axios
+app.mount('#app')
